@@ -1,0 +1,84 @@
+import 'dart:io';
+
+class DNode<T> {
+  T data;
+  DNode<T>? prev;
+  DNode<T>? next;
+
+  DNode(this.data);
+}
+
+class DoubleLinkedList<T> {
+  DNode<T>? head;
+
+  // Menambahkan node di depan untuk pengujian
+  void tambahDiDepan(T data) {
+    DNode<T> newNode = DNode<T>(data);
+    newNode.next = head;
+    if (head != null) {
+      head!.prev = newNode;
+    }
+    head = newNode;
+  }
+
+  // Method latihan: tambah node sebelum node target
+  void tambahNodeSebelum(DNode<T> newNode, DNode<T> target) {
+    if (head == null || newNode == target) return;
+
+    // Jika target adalah head
+    if (target == head) {
+      newNode.next = head;
+      newNode.prev = null;
+      head!.prev = newNode;
+      head = newNode;
+      return;
+    }
+
+    // Traversal maju untuk mencari posisi target
+    DNode<T>? current = head;
+    while (current != null && current != target) {
+      current = current.next;
+    }
+
+    if (current == target) {
+      newNode.prev = target.prev;
+      newNode.next = target;
+
+      if (target.prev != null) {
+        target.prev!.next = newNode;
+      }
+      target.prev = newNode;
+    } else {
+      print("Target node tidak ditemukan dalam list.");
+    }
+  }
+
+  // Menampilkan isi list
+  void tampilkanList() {
+    if (head == null) {
+      print("List kosong.");
+      return;
+    }
+
+    DNode<T>? current = head;
+    while (current != null) {
+      stdout.write("${current.data} ");
+      current = current.next;
+    }
+    print("");
+  }
+}
+
+void main() {
+  var dll = DoubleLinkedList<int>();
+
+  dll.tambahDiDepan(30);
+  dll.tambahDiDepan(20);
+  dll.tambahDiDepan(10); // List: 10 -> 20 -> 30
+
+  var target = dll.head!.next!; // target = node dengan data 20
+  var newNode = DNode<int>(15);
+
+  dll.tambahNodeSebelum(newNode, target);
+  dll.tampilkanList(); // Output: 10 15 20 30
+}
